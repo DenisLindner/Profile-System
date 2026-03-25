@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CurrentUserDecorator } from 'src/auth/decorators/current-user.decorator';
 import type { UserPayload } from './dto/user-payload.dto';
@@ -19,7 +19,8 @@ export class UsersController {
     }
 
     @Delete('me')
+    @HttpCode(204)
     async deleteProfile(@CurrentUserDecorator() user: UserPayload) {
-        return this.service.deleteById(user.sub)
+        await this.service.deleteById(user.sub)
     }
 }

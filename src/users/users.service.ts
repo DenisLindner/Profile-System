@@ -16,15 +16,15 @@ export class UsersService {
     }
 
     async findById(id: number) {
-        const user = await this.prisma.user.findUnique({where: {id}})
+        const user = await this.prisma.user.findUnique({where: {id}, 
+            select: {id: true, name: true, email: true, createdAt: true, updatedAt: true}}
+        )
         
         if(!user){
             throw new NotFoundException('User not found')
         }
         
-        return this.prisma.user.findUnique({where: {id}, 
-            select: {id: true, name: true, email: true, password: false, createdAt: true, updatedAt: true}
-        })
+        return user;
     }
 
     async update(id: number, dto: UpdateUserDTO) {
@@ -35,7 +35,7 @@ export class UsersService {
         }
 
         return this.prisma.user.update({where: {id}, data: {name: dto.name}, 
-            select: {id: true, name: true, email: true, password: false, createdAt: true, updatedAt: true}
+            select: {id: true, name: true, email: true, createdAt: true, updatedAt: true}
         })
     }
 
@@ -46,6 +46,6 @@ export class UsersService {
             throw new NotFoundException('User not found')
         }
 
-        return this.prisma.user.delete({where: {id}, select: {id: true, name: true, email: true, password: false}})
+        await this.prisma.user.delete({where: {id}})
     }
 }
